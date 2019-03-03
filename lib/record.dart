@@ -119,7 +119,7 @@ class RecordPageState extends State<RecordPage> {
         var category = checkedITem.title;
         dbHandler.insertRecord(amount, note, category);
         
-        Navigator.pop(context);
+        Navigator.pop(context, "success");
       },
       child: new Text("提交", style: Theme.of(context).textTheme.title),
       // TODO: add style

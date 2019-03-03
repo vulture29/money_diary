@@ -110,8 +110,6 @@ class DatabaseHandle {
     print("Insert Record: " + record.toString());
     recordDatabase.insert(record);
 
-    await updateBasicDb();
-
-    // sendRecord(amount, note, categoryStr, timestamp);
+    sendRecord(amount, note, categoryStr, timestamp);
   }
 }

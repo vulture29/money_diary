@@ -79,8 +79,8 @@ class DashboardState extends State<Dashboard> {
     super.initState();
     print("init");
     const oneSec = const Duration(seconds: 1);
-    dbTimer = new Timer.periodic(oneSec, (Timer t) {
-      updateBasicDb();
+    dbTimer = new Timer.periodic(oneSec, (Timer t) async{
+      await updateBasicDb();
       loadBasicFromDb();
     });
   }
@@ -94,9 +94,14 @@ class DashboardState extends State<Dashboard> {
           new IconButton(
             icon: const Icon(Icons.add), 
             onPressed: () {
-              Navigator.push(
+              Navigator.push<String>(
                 context,
                 MaterialPageRoute(builder: (context) => RecordPage(dbHandler)),
+              ).then( 
+                (String result) async {
+                  await updateBasicDb();
+                  loadBasicFromDb();
+                }
               );
             }
           ),
@@ -107,13 +112,10 @@ class DashboardState extends State<Dashboard> {
         child: Icon(Icons.info),
         backgroundColor: Colors.pink[200],
         onPressed: () {
-          Navigator.push(
+          Navigator.push<String>(
             context,
-            MaterialPageRoute(builder: (context) => InfoPageRoute(dbHandler)),
-          ).then( (var result) {
-            print("back");
-            print(result.toString());
-          });
+            new MaterialPageRoute(builder: (context) => new InfoPageRoute(dbHandler)),
+          );
         },
       ),
     );
