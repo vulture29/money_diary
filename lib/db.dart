@@ -48,7 +48,7 @@ class DatabaseHandle {
         },
         {
           'name': "刚需",
-          'sub_class': ["刚需_日用", "刚需_交通", "刚需_通信"],
+          'sub_class': ["刚需_日用", "刚需_交通", "刚需_通信", "刚需_学习"],
         },
         {
           'name': "美容",
@@ -72,6 +72,10 @@ class DatabaseHandle {
         },
       ]);
     }
+    await categoryDatabase.update(
+      {'name': "刚需",}, 
+      {'sub_class': ["刚需_日用", "刚需_交通", "刚需_通信", "刚需_学习"]}
+    );
 
     initStatisticDbHandler(this);
   }

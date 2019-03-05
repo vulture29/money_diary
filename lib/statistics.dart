@@ -49,3 +49,14 @@ Future<Null> updateBasicDb() async {
 
   updateLock = false;
 }
+
+Future<List> getTodayRecordList() async {
+  String dateStr = DateTime.now().toString().split(" ")[0];
+  ObjectDB recordDatabase = dbHandler.getRecordDatabse();
+
+  if (recordDatabase == null) {
+    return null;
+  }
+  List todayRecord = await recordDatabase.find({"date": dateStr});
+  return todayRecord;
+}
