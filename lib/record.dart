@@ -66,7 +66,9 @@ class RecordPageState extends State<RecordPage> {
                 fontWeight: FontWeight.bold,
                 fontSize: 32,
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               controller: amountController,
             )
           ),
@@ -136,6 +138,7 @@ class RecordPageState extends State<RecordPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("添加纪录"),
+        elevation: 0,
       ),
       body: Column(
         children: [
