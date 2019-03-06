@@ -46,6 +46,7 @@ class InfoPageRouteState extends State<InfoPageRoute> {
     return Scaffold(
       appBar: AppBar(
         title: Text("详细信息"),
+        elevation: 0,
       ),
       body: body
       // body: Text(_recordInfo.toString()),

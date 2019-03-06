@@ -100,6 +100,7 @@ class DashboardState extends State<Dashboard> {
     return new Scaffold(
       appBar: new AppBar(
         title: const Text('Money Diary'),
+        elevation: 0,
         actions: <Widget>[
           new IconButton(
             icon: const Icon(Icons.add), 
@@ -181,6 +182,7 @@ class DashboardState extends State<Dashboard> {
           borderRadius: BorderRadius.all(Radius.circular(16))
         ),
         child: _todayRecordInfo.length == 0 ? emptyText : ListView.builder(
+          physics: ScrollPhysics(),
           itemCount: _todayRecordInfo.length > 0 ? _todayRecordInfo.length * 2 - 1 : 0,
           itemBuilder: (BuildContext context, int i) {
             if (i.isOdd) {
