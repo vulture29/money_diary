@@ -189,7 +189,8 @@ class DashboardState extends State<Dashboard> {
               return const Divider();
               }
               var index = _todayRecordInfo.length - i ~/ 2 - 1;
-              return TodayInfoRecord(_todayRecordInfo[index]);
+              Key myKey = new Key(_todayRecordInfo[index]["_id"]);
+              return new TodayInfoRecord(myKey, _todayRecordInfo[index]);
             }
         )
       ),
@@ -228,7 +229,7 @@ class DashboardState extends State<Dashboard> {
 
 class TodayInfoRecord extends StatefulWidget {
   final Map record;
-  TodayInfoRecord(this.record);
+  TodayInfoRecord(Key key, this.record) : super(key : key);
 
   @override
   TodayInfoRecordState createState() => new TodayInfoRecordState(record);

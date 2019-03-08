@@ -54,16 +54,18 @@ class InfoPageRouteState extends State<InfoPageRoute> {
   }
 
   Widget _buildRecordList() {
-    return new ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: _recordInfo.length * 2 - 1,
-      itemBuilder: (BuildContext _context, int i) {
-        if (i.isOdd) {
-          return const Divider();
+    return Scrollbar(
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _recordInfo.length * 2 - 1,
+        itemBuilder: (BuildContext _context, int i) {
+          if (i.isOdd) {
+            return const Divider();
+          }
+          var index = _recordInfo.length - i ~/ 2 - 1;
+          return InfoRecord(_recordInfo[index]);
         }
-        var index = _recordInfo.length - i ~/ 2 - 1;
-        return InfoRecord(_recordInfo[index]);
-      }
+      )
     );
   }
 }
