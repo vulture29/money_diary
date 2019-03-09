@@ -25,6 +25,17 @@ class DashboardState extends State<Dashboard> {
 
   DashboardState(this.dbHandler);
 
+  Future<bool> needUpdateBasicDb() async{
+    if (dbHandler.getBasicDatabase() != null) {
+      String date = DateTime.now().toString().split(" ")[0];
+      List basicRecord = await dbHandler.getBasicDatabase().find({"update_date": date});
+      if(basicRecord.length > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   void loadBasicFromDb() async {
     if (dbHandler.getBasicDatabase() != null) {
       String date = DateTime.now().toString().split(" ")[0];
@@ -62,12 +73,14 @@ class DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     print("dashboard");
-    const oneSec = const Duration(seconds: 1);
+    const oneSec = const Duration(milliseconds: 5);
     if (dbTimer != null && dbTimer.isActive) {
       dbTimer.cancel();
     }
     dbTimer = new Timer.periodic(oneSec, (Timer t) async{
-      await updateBasicDb();
+      if (await needUpdateBasicDb()) {
+        await updateBasicDb();
+      }
       loadBasicFromDb();
       loadTodayRecordFromDb();
     });
@@ -106,16 +119,6 @@ class DashboardState extends State<Dashboard> {
         ],
       ),
       body: _buildDashboard(),
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.info),
-      //   backgroundColor: Colors.pink[200],
-      //   onPressed: () {
-      //     Navigator.push<String>(
-      //       context,
-      //       new MaterialPageRoute(builder: (context) => new InfoPageRoute(dbHandler)),
-      //     );
-      //   },
-      // ),
     );
   }
 
@@ -162,7 +165,7 @@ class DashboardState extends State<Dashboard> {
       padding: const EdgeInsets.all(8),
       child: new Container(
         alignment: Alignment.center,
-        height: 480,
+        height: 460,
         decoration: BoxDecoration(
           color: Colors.grey[200],
           borderRadius: BorderRadius.all(Radius.circular(16))

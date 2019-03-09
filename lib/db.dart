@@ -113,8 +113,11 @@ class DatabaseHandle {
       "sub_category":subCategory,
     };
     print("Insert Record: " + record.toString());
-    recordDatabase.insert(record);
+    String recordId = (await recordDatabase.insert(record)).toString();
+    sendRecord(amount, note, categoryStr, timestamp, recordId);
+  }
 
-    sendRecord(amount, note, categoryStr, timestamp);
+  void deleteRecord(String recordId) {
+    print("delete " + recordId);
   }
 }

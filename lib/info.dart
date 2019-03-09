@@ -20,7 +20,6 @@ class InfoPageRouteState extends State<InfoPageRoute> {
   void loadRecordFromDb() async {
     if (dbHandler.getRecordDatabse() != null) {
       List recordInfo = await dbHandler.getRecordDatabse().find({});
-      // print(recordInfo.toString());
       
       setState(() {
         _recordInfo = recordInfo;
@@ -41,7 +40,7 @@ class InfoPageRouteState extends State<InfoPageRoute> {
       body = _buildRecordList();
     }
     else {
-      body = Text("Empty");
+      body = Container();
     }
     return Scaffold(
       appBar: AppBar(
