@@ -1,4 +1,4 @@
-import 'package:money_diary/db.dart';
+import 'package:money_diary/db/db.dart';
 import 'package:objectdb/objectdb.dart';
 import 'dart:async';
 

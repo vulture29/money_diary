@@ -1,9 +1,9 @@
 // Add a new route to hold the favorites.
 
 import 'package:flutter/material.dart';
-import 'package:money_diary/db.dart';
-import 'package:money_diary/dashboard.dart';
-import 'package:money_diary/info.dart';
+import 'package:money_diary/db/db.dart';
+import 'package:money_diary/pages/dashboard_page/dashboard.dart';
+import 'package:money_diary/pages/detail_page/detail.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

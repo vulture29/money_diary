@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_diary/db.dart';
+import 'package:money_diary/db/db.dart';
 
 DatabaseHandle dbHandler;
 Entry checkedITem;

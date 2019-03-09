@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:money_diary/record.dart';
-import 'package:money_diary/db.dart';
-import 'package:money_diary/statistics.dart';
+import 'package:money_diary/pages/insert_record_page/record.dart';
+import 'package:money_diary/db/db.dart';
+import 'package:money_diary/statistics/statistics.dart';
 
 class Dashboard extends StatefulWidget {
   final DatabaseHandle dbHandler;
@@ -72,7 +72,6 @@ class DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    print("dashboard");
     const oneSec = const Duration(milliseconds: 5);
     if (dbTimer != null && dbTimer.isActive) {
       dbTimer.cancel();
