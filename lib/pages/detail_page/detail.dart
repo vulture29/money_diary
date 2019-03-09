@@ -5,24 +5,24 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 DatabaseHandle dbHandler;
 Set showNoteId = new Set();
 
-class InfoPageRoute extends StatefulWidget {
-  InfoPageRoute(DatabaseHandle handler) {
+class DetailPageRoute extends StatefulWidget {
+  DetailPageRoute(DatabaseHandle handler) {
     dbHandler = handler;
   }
 
   @override
-  InfoPageRouteState createState() => new InfoPageRouteState();
+  DetailPageRouteState createState() => new DetailPageRouteState();
 }
 
-class InfoPageRouteState extends State<InfoPageRoute> {
-  List _recordInfo = [];
+class DetailPageRouteState extends State<DetailPageRoute> {
+  List _recordDetail = [];
 
   void loadRecordFromDb() async {
     if (dbHandler.getRecordDatabse() != null) {
-      List recordInfo = await dbHandler.getRecordDatabse().find({});
+      List recordDetail = await dbHandler.getRecordDatabse().find({});
       
       setState(() {
-        _recordInfo = recordInfo;
+        _recordDetail = recordDetail;
       });      
     }
   }
@@ -36,7 +36,7 @@ class InfoPageRouteState extends State<InfoPageRoute> {
   @override
   Widget build(BuildContext context) {
     var body;
-    if (_recordInfo.length > 0) {
+    if (_recordDetail.length > 0) {
       body = _buildRecordList();
     }
     else {
@@ -48,7 +48,7 @@ class InfoPageRouteState extends State<InfoPageRoute> {
         elevation: 0,
       ),
       body: body
-      // body: Text(_recordInfo.toString()),
+      // body: Text(_recordDetail.toString()),
     );
   }
 
@@ -56,30 +56,30 @@ class InfoPageRouteState extends State<InfoPageRoute> {
     return Scrollbar(
       child: ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: _recordInfo.length * 2 - 1,
+        itemCount: _recordDetail.length * 2 - 1,
         itemBuilder: (BuildContext _context, int i) {
           if (i.isOdd) {
             return const Divider();
           }
-          var index = _recordInfo.length - i ~/ 2 - 1;
-          return InfoRecord(_recordInfo[index]);
+          var index = _recordDetail.length - i ~/ 2 - 1;
+          return DetailRecord(_recordDetail[index]);
         }
       )
     );
   }
 }
 
-class InfoRecord extends StatefulWidget {
+class DetailRecord extends StatefulWidget {
   final Map record;
-  InfoRecord(this.record);
+  DetailRecord(this.record);
 
   @override
-  InfoRecordState createState() => new InfoRecordState(record);
+  DetailRecordState createState() => new DetailRecordState(record);
 }
 
-class InfoRecordState extends State<InfoRecord> {
+class DetailRecordState extends State<DetailRecord> {
   Map record;
-  InfoRecordState(this.record);
+  DetailRecordState(this.record);
 
   @override
   Widget build(BuildContext context) {
