@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:money_diary/db/db.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'dart:async';
 
 DatabaseHandle dbHandler;
 Set showNoteId = new Set();
 
-class DetailPageRoute extends StatefulWidget {
-  DetailPageRoute(DatabaseHandle handler) {
+class DetailPage extends StatefulWidget {
+  DetailPage(DatabaseHandle handler) {
     dbHandler = handler;
   }
 
@@ -14,7 +16,7 @@ class DetailPageRoute extends StatefulWidget {
   DetailPageRouteState createState() => new DetailPageRouteState();
 }
 
-class DetailPageRouteState extends State<DetailPageRoute> {
+class DetailPageRouteState extends State<DetailPage> {
   List _recordDetail = [];
 
   void loadRecordFromDb() async {
@@ -47,15 +49,27 @@ class DetailPageRouteState extends State<DetailPageRoute> {
         title: Text("详细信息"),
         elevation: 0,
       ),
-      body: body
+      body: Container(
+        child:RefreshIndicator(
+          onRefresh: _refresh,
+          color: Colors.pink,
+          child: body
+        )
+      )
       // body: Text(_recordDetail.toString()),
     );
+  }
+
+  Future<Null> _refresh() async {
+    // await dbHandler.updateRecordToFirestore();
+    await dbHandler.updateRecordFromFirestore();
+    return;
   }
 
   Widget _buildRecordList() {
     return Scrollbar(
       child: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         itemCount: _recordDetail.length * 2 - 1,
         itemBuilder: (BuildContext _context, int i) {
           if (i.isOdd) {
@@ -80,6 +94,7 @@ class DetailRecord extends StatefulWidget {
 class DetailRecordState extends State<DetailRecord> {
   Map record;
   DetailRecordState(this.record);
+  String recordId = "";
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +129,7 @@ class DetailRecordState extends State<DetailRecord> {
     }
     var iconSection = new Icon(iconData);
 
-    var recordId =record["_id"];
+    recordId =record["_id"];
     var _showNoteId = showNoteId.contains(recordId);
     var titleSection = buildTitleSection(record, _showNoteId);
     
@@ -123,19 +138,52 @@ class DetailRecordState extends State<DetailRecord> {
       style: Theme.of(context).textTheme.headline
     );
 
-    return new ListTile(
-      leading: iconSection,
-      title: titleSection,
-      trailing: amountSection,
-      onTap: () {
-        setState(() {
-          if (_showNoteId) {
-            showNoteId.remove(recordId);
-          } else {
-            showNoteId.add(recordId);
+    return buildDetailRow(iconSection, titleSection, amountSection, _showNoteId) ;
+  }
+
+  Widget buildDetailRow(iconSection, titleSection, amountSection, _showNoteId) {
+    return new Slidable(
+      delegate: new SlidableDrawerDelegate(),
+      actionExtentRatio: 0.25,
+      child: new Container(
+        color: Colors.white,
+        child: ListTile(
+          leading: iconSection,
+          title: titleSection,
+          trailing: amountSection,
+          onTap: () {
+            if (recordId.length == 0) {
+              return;
+            }
+            setState(() {
+              if (_showNoteId) {
+                showNoteId.remove(recordId);
+              } else {
+                showNoteId.add(recordId);
+              }
+            });
+          },
+        )
+      ),
+      secondaryActions: <Widget>[
+        new IconSlideAction(
+          caption: '编辑',
+          color: Colors.black45,
+          icon: Icons.edit,
+          onTap: () => print("edit record")
+        ),
+        new IconSlideAction(
+          caption: '删除',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () {
+            if (recordId.length == 0) {
+              return;
+            }
+            dbHandler.deleteRecord(recordId);
           }
-        });
-      },
+        ),
+      ],
     );
   }
 

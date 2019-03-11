@@ -11,6 +11,7 @@ void sendRecord(double amount, String note, String categoryStr, int timestamp, S
     "category": categoryStr, 
     "timestamp":timestamp.toString(), 
     "record_id":recordId.toString(),
+    "username": "xingyao",
     }
   ).then((response) {
     print("Response status: ${response.statusCode}");

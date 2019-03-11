@@ -4,11 +4,14 @@ import 'package:objectdb/objectdb.dart';
 import 'package:money_diary/statistics/statistics.dart';
 import 'package:money_diary/network/network.dart';
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseHandle {
   ObjectDB basicDatabase;
   ObjectDB categoryDatabase;
   ObjectDB recordDatabase;
+
+  Firestore fdb = Firestore.instance;
   
   Future<Null> loadDatabase() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -73,10 +76,6 @@ class DatabaseHandle {
         },
       ]);
     }
-    await categoryDatabase.update(
-      {'name': "刚需",}, 
-      {'sub_class': ["刚需_日用", "刚需_交通", "刚需_通信", "刚需_学习"]}
-    );
 
     initStatisticDbHandler(this);
   }
@@ -93,7 +92,81 @@ class DatabaseHandle {
     return recordDatabase;
   }
 
-  void insertRecord(String amountStr, String note, String categoryStr) async{
+  Future<Null> updateRecordToFirestore() async {
+    // print((await recordDatabase.find({})).toString());
+
+    List recordDetail = await recordDatabase.find({});
+
+    var batch = fdb.batch();
+    for(var record in recordDetail) {
+      var dataMap = new Map<String, dynamic>();
+      dataMap['amount'] = record['amount'];
+      dataMap['timestamp'] = record['timestamp'];
+      dataMap['main_category'] = record["main_category"];
+      dataMap['sub_category'] = record["sub_category"];
+      dataMap['note'] = record["note"];
+      dataMap['date_time'] = record['date_time'];
+      dataMap['year'] = record['year'];
+      dataMap['month'] = record['month'];
+      dataMap['date'] = record['date'];
+      dataMap['username'] = "xingyao";
+
+      var recordId = record["_id"];
+      // batch.setData(fdb.collection('record').document(recordId.toString()), dataMap, merge: true);
+      await fdb.collection('record').document(recordId.toString()).setData(dataMap, merge:true);
+      print("update one");
+    }
+    // print("record: " + batch.toString());
+    
+    // await batch.commit().catchError((error) {
+    //   print("error when udpate to firebase");
+    // });
+    print("Done");
+  }
+
+  Future<Null> updateRecordFromFirestore() async {
+    QuerySnapshot querySnap = await fdb.collection('record').getDocuments().catchError((error) {
+      print("error when udpate from firebase");
+    });
+    for(DocumentSnapshot document in querySnap.documents) {
+      Map record = document.data;
+      String recordId = document.documentID;
+      // print("Update: " + record.toString());
+      if ((await recordDatabase.find({"record_id": recordId})).isEmpty) {
+        recordDatabase.insert({
+            "record_id": recordId,
+            "year": record["year"],
+            "month": record["month"],
+            "date": record["date"],
+            "date_time": record["date_time"],
+            "timestamp": record["timestamp"],
+            "amount": record["amount"],
+            "note": record["note"],
+            "main_category": record["main_category"],
+            "sub_category": record["sub_category"],
+          }
+        );
+      }
+      else {
+        recordDatabase.update(
+          {"record_id": recordId}, 
+          {
+            "year": record["year"],
+            "month": record["month"],
+            "date": record["date"],
+            "date_time": record["date_time"],
+            "timestamp": record["timestamp"],
+            "amount": record["amount"],
+            "note": record["note"],
+            "main_category": record["main_category"],
+            "sub_category": record["sub_category"],
+          }
+        );
+      }
+    }
+  }
+
+  void insertRecord(String amountStr, String note, String categoryStr) {
     double amount = double.parse(double.parse(amountStr).toStringAsFixed(2));
     String mainCategory = categoryStr.split("_")[0];
     String subCategory = categoryStr.split("_")[1];
@@ -113,11 +186,17 @@ class DatabaseHandle {
       "sub_category":subCategory,
     };
     print("Insert Record: " + record.toString());
-    String recordId = (await recordDatabase.insert(record)).toString();
-    sendRecord(amount, note, categoryStr, timestamp, recordId);
+
+    String recordId = (recordDatabase.insert(record)).toString();
+    recordDatabase.update({"_id": recordId}, {"record_id": recordId});
+    // sendRecord(amount, note, categoryStr, timestamp, recordId);
   }
 
-  void deleteRecord(String recordId) {
+  deleteRecord(String recordId) {
     print("delete " + recordId);
+  }
+
+  editRecord(String recordId, String amountStr, String note, String categoryStr)  {
+    print("edit " + recordId);
   }
 }
