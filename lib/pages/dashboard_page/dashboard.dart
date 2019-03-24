@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:money_diary/pages/insert_record_page/record.dart';
 import 'package:money_diary/db/db.dart';
-import 'package:money_diary/statistics/statistics.dart';
+import 'package:money_diary/util/caculator.dart';
 
 class Dashboard extends StatefulWidget {
   final DatabaseHandle dbHandler;
