@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:money_diary/db/db.dart';
 import 'package:money_diary/pages/dashboard_page/dashboard.dart';
 import 'package:money_diary/pages/detail_page/detail.dart';
+import 'package:money_diary/pages/summary_page/summary.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -44,7 +45,7 @@ class MainHomeState extends State<MainHome> {
     Dashboard(dbHandler),
     DetailPage(dbHandler),
     Container(),
-    Container(),
+    SummaryPage(dbHandler),
   ];
 
   void onTabTapped(int index) {

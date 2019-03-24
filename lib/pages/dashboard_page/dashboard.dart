@@ -199,7 +199,7 @@ class DashboardState extends State<Dashboard> {
     );
 
     return new Container(
-      child:RefreshIndicator(
+      child: RefreshIndicator(
         onRefresh: _refresh,
         color: Colors.pink,
         child: dashBoardContext
@@ -208,7 +208,6 @@ class DashboardState extends State<Dashboard> {
   }
 
   Future<Null> _refresh() async {
-    // await dbHandler.updateRecordFromFirestore();
     await updateBasicDb();
     loadBasicFromDb();
     loadTodayRecordFromDb();

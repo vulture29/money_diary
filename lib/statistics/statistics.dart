@@ -20,6 +20,7 @@ Future<Null> updateBasicDb() async {
 
   ObjectDB basicDatabase = dbHandler.getBasicDatabase();
   ObjectDB recordDatabase = dbHandler.getRecordDatabse();
+  ObjectDB incomeDatabase = dbHandler.getIncomeDatabse();
 
   List todayRecord = await recordDatabase.find({"date": dateStr});
   var todaySum = todayRecord.fold(0, (a, b) => a + b["amount"]);
@@ -28,6 +29,18 @@ Future<Null> updateBasicDb() async {
   List thisMonthRecord = await recordDatabase.find({"month": monthStr});
   var thisMonthSum = thisMonthRecord.fold(0, (a, b) => a + b["amount"]);
   thisMonthSum = double.parse(thisMonthSum.toStringAsFixed(2));
+
+  List totalRecord = await recordDatabase.find({});
+  var totalSum = totalRecord.fold(0, (a, b) => a + b["amount"]);
+  totalSum = double.parse(totalSum.toStringAsFixed(2));
+
+  List thisMonthIncome = await incomeDatabase.find({"month": monthStr});
+  var thisMonthSumIncome = thisMonthIncome.fold(0, (a, b) => a + b["amount"]);
+  thisMonthSumIncome = double.parse(thisMonthSumIncome.toStringAsFixed(2));
+
+  List totalIncome = await incomeDatabase.find({});
+  var totalSumIncome = totalIncome.fold(0, (a, b) => a + b["amount"]);
+  totalSumIncome = double.parse(totalSumIncome.toStringAsFixed(2));
   
   List basicRecord = await dbHandler.getBasicDatabase().find({"update_date": dateStr});
   
@@ -36,6 +49,9 @@ Future<Null> updateBasicDb() async {
       "update_date": dateStr,
       "total_today": todaySum,
       "total_this_month":thisMonthSum,
+      "total":totalSum,
+      "income_this_month":thisMonthSumIncome,
+      "total_income":totalSumIncome,
     });
   }
   else {
@@ -43,6 +59,9 @@ Future<Null> updateBasicDb() async {
       {
         "total_today": todaySum,
         "total_this_month":thisMonthSum,
+        "total":totalSum,
+        "income_this_month":thisMonthSumIncome,
+        "total_income":totalSumIncome,
       }
     );
   }

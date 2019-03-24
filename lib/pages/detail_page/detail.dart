@@ -13,10 +13,10 @@ class DetailPage extends StatefulWidget {
   }
 
   @override
-  DetailPageRouteState createState() => new DetailPageRouteState();
+  DetailPageState createState() => new DetailPageState();
 }
 
-class DetailPageRouteState extends State<DetailPage> {
+class DetailPageState extends State<DetailPage> {
   List _recordDetail = [];
 
   void loadRecordFromDb() async {
@@ -61,8 +61,6 @@ class DetailPageRouteState extends State<DetailPage> {
   }
 
   Future<Null> _refresh() async {
-    // await dbHandler.updateRecordToFirestore();
-    await dbHandler.updateRecordFromFirestore();
     return;
   }
 

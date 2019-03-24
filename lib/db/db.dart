@@ -4,20 +4,19 @@ import 'package:objectdb/objectdb.dart';
 import 'package:money_diary/statistics/statistics.dart';
 import 'package:money_diary/network/network.dart';
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseHandle {
   ObjectDB basicDatabase;
   ObjectDB categoryDatabase;
   ObjectDB recordDatabase;
-
-  Firestore fdb = Firestore.instance;
+  ObjectDB incomeDatabase;
   
   Future<Null> loadDatabase() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String basicDbFilePath = [appDocDir.path, 'basic.db'].join('/');
     String categoryDbFilePath = [appDocDir.path, 'category.db'].join('/');
     String recordDbFilePath = [appDocDir.path, 'record.db'].join('/');
+    String incomeDbFilePath = [appDocDir.path, 'income.db'].join('/');
 
     // delete old database file if exists
     // File basicDbFile = File(basicDbFilePath);
@@ -31,12 +30,14 @@ class DatabaseHandle {
     basicDatabase = ObjectDB(basicDbFilePath);
     categoryDatabase = ObjectDB(categoryDbFilePath);
     recordDatabase = ObjectDB(recordDbFilePath);
+    incomeDatabase = ObjectDB(incomeDbFilePath);
     await basicDatabase.open();
     await categoryDatabase.open();
     await recordDatabase.open();
+    await incomeDatabase.open();
 
-    if (categoryIsNew) {
-      print("category is new ====");
+    if (true) {
+      await categoryDatabase.remove({});
       await categoryDatabase.insertMany([
         {
           'name': "餐饮",
@@ -71,6 +72,10 @@ class DatabaseHandle {
           'sub_class': ["医疗_药品", "医疗_治疗"],
         },
         {
+          'name': "投资",
+          'sub_class': ["投资_投资"],
+        },
+        {
           'name': "收入",
           'sub_class': ["收入_工资"],
         },
@@ -92,79 +97,83 @@ class DatabaseHandle {
     return recordDatabase;
   }
 
-  Future<Null> updateRecordToFirestore() async {
-    // print((await recordDatabase.find({})).toString());
+  ObjectDB getIncomeDatabse() {
+    return incomeDatabase;
+  }
 
-    List recordDetail = await recordDatabase.find({});
+  // Future<Null> updateRecordToFirestore() async {
+  //   // print((await recordDatabase.find({})).toString());
 
-    var batch = fdb.batch();
-    for(var record in recordDetail) {
-      var dataMap = new Map<String, dynamic>();
-      dataMap['amount'] = record['amount'];
-      dataMap['timestamp'] = record['timestamp'];
-      dataMap['main_category'] = record["main_category"];
-      dataMap['sub_category'] = record["sub_category"];
-      dataMap['note'] = record["note"];
-      dataMap['date_time'] = record['date_time'];
-      dataMap['year'] = record['year'];
-      dataMap['month'] = record['month'];
-      dataMap['date'] = record['date'];
-      dataMap['username'] = "xingyao";
+  //   List recordDetail = await recordDatabase.find({});
 
-      var recordId = record["_id"];
-      // batch.setData(fdb.collection('record').document(recordId.toString()), dataMap, merge: true);
-      await fdb.collection('record').document(recordId.toString()).setData(dataMap, merge:true);
-      print("update one");
-    }
-    // print("record: " + batch.toString());
+  //   var batch = fdb.batch();
+  //   for(var record in recordDetail) {
+  //     var dataMap = new Map<String, dynamic>();
+  //     dataMap['amount'] = record['amount'];
+  //     dataMap['timestamp'] = record['timestamp'];
+  //     dataMap['main_category'] = record["main_category"];
+  //     dataMap['sub_category'] = record["sub_category"];
+  //     dataMap['note'] = record["note"];
+  //     dataMap['date_time'] = record['date_time'];
+  //     dataMap['year'] = record['year'];
+  //     dataMap['month'] = record['month'];
+  //     dataMap['date'] = record['date'];
+  //     dataMap['username'] = "xingyao";
+
+  //     var recordId = record["_id"];
+  //     // batch.setData(fdb.collection('record').document(recordId.toString()), dataMap, merge: true);
+  //     await fdb.collection('record').document(recordId.toString()).setData(dataMap, merge:true);
+  //     print("update one");
+  //   }
+  //   // print("record: " + batch.toString());
     
-    // await batch.commit().catchError((error) {
-    //   print("error when udpate to firebase");
-    // });
-    print("Done");
-  }
+  //   // await batch.commit().catchError((error) {
+  //   //   print("error when udpate to firebase");
+  //   // });
+  //   print("Done");
+  // }
 
-  Future<Null> updateRecordFromFirestore() async {
-    QuerySnapshot querySnap = await fdb.collection('record').getDocuments().catchError((error) {
-      print("error when udpate from firebase");
-    });
-    for(DocumentSnapshot document in querySnap.documents) {
-      Map record = document.data;
-      String recordId = document.documentID;
-      // print("Update: " + record.toString());
-      if ((await recordDatabase.find({"record_id": recordId})).isEmpty) {
-        recordDatabase.insert({
-            "record_id": recordId,
-            "year": record["year"],
-            "month": record["month"],
-            "date": record["date"],
-            "date_time": record["date_time"],
-            "timestamp": record["timestamp"],
-            "amount": record["amount"],
-            "note": record["note"],
-            "main_category": record["main_category"],
-            "sub_category": record["sub_category"],
-          }
-        );
-      }
-      else {
-        recordDatabase.update(
-          {"record_id": recordId}, 
-          {
-            "year": record["year"],
-            "month": record["month"],
-            "date": record["date"],
-            "date_time": record["date_time"],
-            "timestamp": record["timestamp"],
-            "amount": record["amount"],
-            "note": record["note"],
-            "main_category": record["main_category"],
-            "sub_category": record["sub_category"],
-          }
-        );
-      }
-    }
-  }
+  // Future<Null> updateRecordFromFirestore() async {
+  //   QuerySnapshot querySnap = await fdb.collection('record').getDocuments().catchError((error) {
+  //     print("error when udpate from firebase");
+  //   });
+  //   for(DocumentSnapshot document in querySnap.documents) {
+  //     Map record = document.data;
+  //     String recordId = document.documentID;
+  //     // print("Update: " + record.toString());
+  //     if ((await recordDatabase.find({"record_id": recordId})).isEmpty) {
+  //       recordDatabase.insert({
+  //           "record_id": recordId,
+  //           "year": record["year"],
+  //           "month": record["month"],
+  //           "date": record["date"],
+  //           "date_time": record["date_time"],
+  //           "timestamp": record["timestamp"],
+  //           "amount": record["amount"],
+  //           "note": record["note"],
+  //           "main_category": record["main_category"],
+  //           "sub_category": record["sub_category"],
+  //         }
+  //       );
+  //     }
+  //     else {
+  //       recordDatabase.update(
+  //         {"record_id": recordId}, 
+  //         {
+  //           "year": record["year"],
+  //           "month": record["month"],
+  //           "date": record["date"],
+  //           "date_time": record["date_time"],
+  //           "timestamp": record["timestamp"],
+  //           "amount": record["amount"],
+  //           "note": record["note"],
+  //           "main_category": record["main_category"],
+  //           "sub_category": record["sub_category"],
+  //         }
+  //       );
+  //     }
+  //   }
+  // }
 
   void insertRecord(String amountStr, String note, String categoryStr) {
     double amount = double.parse(double.parse(amountStr).toStringAsFixed(2));
@@ -187,9 +196,15 @@ class DatabaseHandle {
     };
     print("Insert Record: " + record.toString());
 
-    String recordId = (recordDatabase.insert(record)).toString();
-    recordDatabase.update({"_id": recordId}, {"record_id": recordId});
-    // sendRecord(amount, note, categoryStr, timestamp, recordId);
+    if (mainCategory == "收入") {
+      String recordId = (incomeDatabase.insert(record)).toString();
+      incomeDatabase.update({"_id": recordId}, {"record_id": recordId});
+    }
+    else {
+      String recordId = (recordDatabase.insert(record)).toString();
+      recordDatabase.update({"_id": recordId}, {"record_id": recordId});
+      // sendRecord(amount, note, categoryStr, timestamp, recordId);
+    }
   }
 
   deleteRecord(String recordId) {
