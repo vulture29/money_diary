@@ -27,16 +27,6 @@ class SummaryPageState extends State<SummaryPage> {
 
   SummaryPageState(this.dbHandler);
 
-  // void loadIncomeFromDb() async {
-  //   if (dbHandler.getRecordDatabse() != null) {
-  //     List incomeDetail = await dbHandler.getIncomeDatabse().find({});
-  //     print(incomeDetail.toString());
-  //     setState(() {
-  //       _incomeDetail = incomeDetail;
-  //     });      
-  //   }
-  // }
-
   void loadBasicFromDb() async {
     if (dbHandler.getBasicDatabase() != null) {
       String date = DateTime.now().toString().split(" ")[0];
@@ -51,7 +41,9 @@ class SummaryPageState extends State<SummaryPage> {
         };
         setState(() {
           _basicInfo = basicInfo;
+          print(_basicInfo["total"]);
           _leftMoney = _basicInfo["total_income"] - _basicInfo["total"];
+          _leftMoney = double.parse(_leftMoney.toStringAsFixed(2));
         });
       }
     }
@@ -76,8 +68,11 @@ class SummaryPageState extends State<SummaryPage> {
   }
 
   Widget _buildSummary() {
-    String tipTextStr = "加油~好好理财吧";
-    if (_leftMoney < 500) {
+    String tipTextStr = "加油~好好赚钱吧";
+    if (_leftMoney > 50000) {
+      tipTextStr = "不错不错~有点资产了";
+    }
+    else if (_leftMoney < 500) {
       tipTextStr = "额，快破产了 T^T";
     }
     else if (_leftMoney < 2000) {
