@@ -68,13 +68,17 @@ class DetailPageState extends State<DetailPage> {
     return Scrollbar(
       child: ListView.builder(
         padding: const EdgeInsets.all(8.0),
-        itemCount: _recordDetail.length * 2 - 1,
+        // itemCount: _recordDetail.length * 2 - 1,
+        // itemBuilder: (BuildContext _context, int i) {
+        //   if (i.isOdd) {
+        //     return const Divider();
+        //   }
+        //   var index = _recordDetail.length - i ~/ 2 - 1;
+        //   return DetailRecord(_recordDetail[index]);
+        // }
+        itemCount: _recordDetail.length,
         itemBuilder: (BuildContext _context, int i) {
-          if (i.isOdd) {
-            return const Divider();
-          }
-          var index = _recordDetail.length - i ~/ 2 - 1;
-          return DetailRecord(_recordDetail[index]);
+          return DetailRecord(_recordDetail[i]);
         }
       )
     );

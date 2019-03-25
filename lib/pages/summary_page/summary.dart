@@ -41,7 +41,6 @@ class SummaryPageState extends State<SummaryPage> {
         };
         setState(() {
           _basicInfo = basicInfo;
-          print(_basicInfo["total"]);
           _leftMoney = _basicInfo["total_income"] - _basicInfo["total"];
           _leftMoney = double.parse(_leftMoney.toStringAsFixed(2));
         });
@@ -53,7 +52,6 @@ class SummaryPageState extends State<SummaryPage> {
   void initState() {
     super.initState();
     loadBasicFromDb();
-    // loadIncomeFromDb();
   }
 
   @override
@@ -68,9 +66,9 @@ class SummaryPageState extends State<SummaryPage> {
   }
 
   Widget _buildSummary() {
-    String tipTextStr = "加油~好好赚钱吧";
+    String tipTextStr = "好好赚钱吧~";
     if (_leftMoney > 50000) {
-      tipTextStr = "不错不错~有点资产了";
+      tipTextStr = "继续加油~存到拍婚纱照的钱啦";
     }
     else if (_leftMoney < 500) {
       tipTextStr = "额，快破产了 T^T";

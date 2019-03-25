@@ -36,7 +36,7 @@ class DatabaseHandle {
     await recordDatabase.open();
     await incomeDatabase.open();
 
-    if (true) {
+    if (categoryIsNew) {
       await categoryDatabase.remove({});
       await categoryDatabase.insertMany([
         {
